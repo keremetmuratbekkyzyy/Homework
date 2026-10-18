@@ -18,21 +18,64 @@ gmailButton.addEventListener("click", function () {
 });
 
 
-const parentBlock = document.querySelector(".parent_block");
-const childBlock = document.querySelector(".child_block");
+const parentBlock = document.querySelector('.parent_block');
+const childBlock = document.querySelector('.child_block');
 
-let position = 0;
+let positionX = 0;
+let positionY = 0;
 
-function moveBlock() {
-    const parentWidth = parentBlock.clientWidth;
-    const childWidth = childBlock.offsetWidth;
+const maxWidth = parentBlock.clientWidth - childBlock.offsetWidth;
+const maxHeight = parentBlock.clientHeight - childBlock.offsetHeight;
 
-    if (position <= parentWidth - childWidth) {
-        childBlock.style.left = position + "px";
-        position++;
+const speed = 3;
 
-        setTimeout(moveBlock, 10);
+const move = () => {
+    childBlock.style.left = `${positionX}px`;
+    childBlock.style.top = `${positionY}px`;
+
+    if (positionX < maxWidth && positionY === 0) {
+        positionX = Math.min(positionX + speed, maxWidth);
     }
-}
+    else if (positionX >= maxWidth && positionY < maxHeight) {
+        positionY = Math.min(positionY + speed, maxHeight);
+    }
+    else if (positionY >= maxHeight && positionX > 0) {
+        positionX = Math.max(positionX - speed, 0);
+    }
+    else if (positionX <= 0 && positionY > 0) {
+        positionY = Math.max(positionY - speed, 0);
+    }
+    requestAnimationFrame(move);
+};
 
-moveBlock();
+move();
+
+const secondsDisplay = document.querySelector("#seconds");
+const startButton = document.querySelector("#start");
+const stopButton = document.querySelector("#stop");
+const resetButton = document.querySelector("#reset");
+
+let seconds = 0;
+let timer = null;
+
+startButton.addEventListener("click", function () {
+    if (timer !== null) {
+        return;
+    }
+    timer = setInterval(function () {
+        seconds++;
+        secondsDisplay.textContent = seconds;
+    }, 1000);
+});
+
+stopButton.addEventListener("click", function () {
+    clearInterval(timer);
+    timer = null;
+});
+
+resetButton.addEventListener("click", function () {
+    clearInterval(timer);
+    timer = null;
+    seconds = 0;
+    secondsDisplay.textContent = seconds;
+});
