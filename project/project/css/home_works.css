@@ -1,4 +1,4 @@
-/* GMAIL BLOCK */
+
 
 .gmail_block {
     background: black;
@@ -26,7 +26,7 @@
     margin: 20px 0;
 }
 
-/* MOVE BLOCK */
+
 
 .move_block {
     background: black;
@@ -60,7 +60,7 @@
     margin-top: 50px;
 }
 
-/*----ANALOG CLOCK-----*/
+
 
 .clock {
     --clock-size: 360px;
@@ -160,7 +160,6 @@
 }
 
 
-/*-------STOP WATCH------ */
 
 .time {
     color: white;
@@ -191,39 +190,76 @@
     justify-content: space-between;
 }
 
-/*--------CHARACTERS---------*/
-
 .characters {
     background: var(--black);
+    padding: 50px 20px;
 }
 
 .characters-list {
-    padding: 100px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: stretch;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 30px;
 }
 
 .character-card {
-    border: 2px solid var(--orange);
-    padding: 10px;
     width: 250px;
+    padding: 15px;
+    border: 2px solid var(--orange);
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 12px;
     text-align: center;
+    color: white;
+    box-sizing: border-box;
+    transition: transform 0.3s ease;
+}
+
+.character-card:hover {
+    transform: translateY(-5px);
 }
 
 .character-photo {
     width: 100%;
-    height: 250px;
-    border: 2px solid var(--orange);
-    margin: 0 auto;
+    height: 230px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .character-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
+
+.character-card h3 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.character-card p {
+    margin: 0;
+    font-size: 16px;
+    color: #ccc;
+}
+
+
+@media (max-width: 600px) {
+    .characters-list {
+        gap: 20px;
+        padding: 30px 0;
+    }
+
+    .character-card {
+        width: 100%;
+        max-width: 320px;
+    }
+}
+

@@ -79,3 +79,65 @@ resetButton.addEventListener("click", function () {
     seconds = 0;
     secondsDisplay.textContent = seconds;
 });
+<<<<<<< HEAD
+=======
+
+
+
+const charactersList = document.querySelector(".characters-list");
+
+fetch("../data/characters.json")
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Не удалось загрузить персонажей");
+        }
+
+        return response.json();
+    })
+    .then(characters => {
+        characters.forEach(character => {
+            const card = document.createElement("div");
+            card.classList.add("character-card");
+
+            const photoBlock = document.createElement("div");
+            photoBlock.classList.add("character-photo");
+
+            const image = document.createElement("img");
+            image.src = character.photo;
+            image.alt = character.name;
+
+            const name = document.createElement("h3");
+            name.textContent = character.name;
+
+            const species = document.createElement("p");
+            species.textContent = character.species;
+
+            photoBlock.append(image);
+            card.append(photoBlock, name, species);
+            charactersList.append(card);
+        });
+    })
+    .catch(error => {
+        console.log("Ошибка:", error);
+    });
+
+//2
+const xhr = new XMLHttpRequest();
+
+xhr.open("GET", "../data/info.json");
+
+xhr.onload = function () {
+    if (xhr.status >= 200 && xhr.status < 300) {
+        const data = JSON.parse(xhr.responseText);
+        console.log(data);
+    } else {
+        console.log("Ошибка запроса:", xhr.status);
+    }
+};
+
+xhr.onerror = function () {
+    console.log("Ошибка сети");
+};
+
+xhr.send();
+>>>>>>> 47d395a (Add new project files)

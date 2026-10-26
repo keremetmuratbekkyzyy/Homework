@@ -1,0 +1,20 @@
+[{
+    "name": "JavaScript Homework",
+    "lesson": 3,
+    "completed": false,
+    "topics": ["JSON", "Fetch API", "XMLHttpRequest"]
+},
+{
+    "name": "Keremet",
+    "age": 25,
+    "profession": "Frontend Developer",
+    "skills": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+    ],
+    "language": "Russian",
+    "isLearning": true
+}
+
+]
