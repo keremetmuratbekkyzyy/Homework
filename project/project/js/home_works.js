@@ -79,8 +79,6 @@ resetButton.addEventListener("click", function () {
     seconds = 0;
     secondsDisplay.textContent = seconds;
 });
-<<<<<<< HEAD
-=======
 
 
 
@@ -140,4 +138,4 @@ xhr.onerror = function () {
 };
 
 xhr.send();
->>>>>>> 47d395a (Add new project files)
+
