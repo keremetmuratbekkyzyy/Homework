@@ -32,3 +32,77 @@ setInterval(function () {
 
     changeTab(currentTabIndex);
 }, 3000);
+
+
+//converter
+const usdInput = document.querySelector('#usd');
+const somInput = document.querySelector('#som');
+const eurInput = document.querySelector('#eur');
+
+let rates = null;
+
+const xhr = new XMLHttpRequest();
+xhr.open('GET', '../data/convertor.json');
+
+xhr.onload = () => {
+    rates = JSON.parse(xhr.response);
+};
+
+xhr.onerror = () => {
+    console.error('Не удалось загрузить курс');
+};
+
+xhr.send();
+
+function clearOthers(a, b) {
+    a.value = '';
+    b.value = '';
+}
+
+somInput.oninput = () => {
+    if (!rates) return;
+
+    if (somInput.value === '') {
+        clearOthers(usdInput, eurInput);
+        return;
+    }
+    const som = Number(somInput.value);
+
+    usdInput.value = (som / rates.usd).toFixed(2);
+    eurInput.value = (som / rates.eur).toFixed(2);
+};
+
+
+usdInput.oninput = () => {
+    if (!rates) return;
+    if (usdInput.value === '') {
+        clearOthers(somInput, eurInput);
+        return;
+    }
+
+    const usd = Number(usdInput.value);
+
+    somInput.value = (usd * rates.usd).toFixed(2);
+    eurInput.value = (usd * rates.usd / rates.eur).toFixed(2);
+};
+
+eurInput.oninput = () => {
+    if (!rates) return;
+    if (eurInput.value === '') {
+        clearOthers(somInput, usdInput);
+        return;
+    }
+
+    const eur = Number(eurInput.value);
+
+    somInput.value = (eur * rates.eur).toFixed(2);
+    usdInput.value = (eur * rates.eur / rates.usd).toFixed(2);
+};
+
+
+
+
+// DRY dont repaet yourself
+// KISS keep it simple stupid
+
+

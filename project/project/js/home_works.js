@@ -80,8 +80,6 @@ resetButton.addEventListener("click", function () {
     secondsDisplay.textContent = seconds;
 });
 
-
-
 const charactersList = document.querySelector(".characters-list");
 
 fetch("../data/characters.json")
@@ -138,4 +136,3 @@ xhr.onerror = function () {
 };
 
 xhr.send();
-
