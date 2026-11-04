@@ -34,75 +34,103 @@ setInterval(function () {
 }, 3000);
 
 
-//converter
 const usdInput = document.querySelector('#usd');
 const somInput = document.querySelector('#som');
 const eurInput = document.querySelector('#eur');
 
 let rates = null;
 
+const inputs = {
+    usd: usdInput,
+    som: somInput,
+    eur: eurInput
+};
+
 const xhr = new XMLHttpRequest();
 xhr.open('GET', '../data/convertor.json');
 
-xhr.onload = () => {
-    rates = JSON.parse(xhr.response);
+xhr.onload = function () {
+    if (xhr.status === 200) {
+        rates = JSON.parse(xhr.responseText);
+    }
 };
 
-xhr.onerror = () => {
+xhr.onerror = function () {
     console.error('Не удалось загрузить курс');
 };
 
 xhr.send();
 
-function clearOthers(a, b) {
-    a.value = '';
-    b.value = '';
+
+function convertCurrency(currency) {
+    if (!rates) return;
+
+    const currentInput = inputs[currency];
+    const amount = currentInput.value;
+
+    if (amount === '') {
+        Object.keys(inputs).forEach(function (key) {
+            if (key !== currency) {
+                inputs[key].value = '';
+            }
+        });
+        return;
+    }
+
+    const som = Number(amount) * (rates[currency] || 1);
+
+    Object.keys(inputs).forEach(function (key) {
+        if (key !== currency) {
+            inputs[key].value = (som / (rates[key] || 1)).toFixed(2);
+        }
+    });
 }
+Object.keys(inputs).forEach(function (currency) {
+    inputs[currency].addEventListener('input', function () {
+        convertCurrency(currency);
+    });
+});
 
-somInput.oninput = () => {
-    if (!rates) return;
+const card = document.querySelector('.card');
+const btnNext = document.querySelector('#btn-next');
+const btnPrev = document.querySelector('#btn-prev');
 
-    if (somInput.value === '') {
-        clearOthers(usdInput, eurInput);
-        return;
-    }
-    const som = Number(somInput.value);
+let cardId = 1;
 
-    usdInput.value = (som / rates.usd).toFixed(2);
-    eurInput.value = (som / rates.eur).toFixed(2);
+const getCard = () => {
+    fetch(`https://jsonplaceholder.typicode.com/todos/${cardId}`)
+        .then((response) => response.json())
+        .then((data) => {
+            const text = data.completed ? 'completed' : 'in progress';
+            const color = data.completed ? 'green' : 'red';
+
+            card.innerHTML = `
+                <p>${data.title}</p>
+                <p style="color: ${color}">${text}</p>
+                <span>${data.id}</span>
+            `;
+        })
+        .catch((error) => console.error(error));
 };
 
-
-usdInput.oninput = () => {
-    if (!rates) return;
-    if (usdInput.value === '') {
-        clearOthers(somInput, eurInput);
-        return;
-    }
-
-    const usd = Number(usdInput.value);
-
-    somInput.value = (usd * rates.usd).toFixed(2);
-    eurInput.value = (usd * rates.usd / rates.eur).toFixed(2);
+btnNext.onclick = () => {
+    cardId = cardId === 200 ? 1 : cardId + 1;
+    getCard();
 };
 
-eurInput.oninput = () => {
-    if (!rates) return;
-    if (eurInput.value === '') {
-        clearOthers(somInput, usdInput);
-        return;
-    }
-
-    const eur = Number(eurInput.value);
-
-    somInput.value = (eur * rates.eur).toFixed(2);
-    usdInput.value = (eur * rates.eur / rates.usd).toFixed(2);
+btnPrev.onclick = () => {
+    cardId = cardId === 1 ? 200 : cardId - 1;
+    getCard();
 };
 
+getCard();
 
 
+fetch('https://jsonplaceholder.typicode.com/posts')
+    .then(response => response.json())
+    .then(data => console.log('Posts:', data))
+    .catch(error => console.error(error));
 
-// DRY dont repaet yourself
-// KISS keep it simple stupid
+
 
 
