@@ -34,6 +34,9 @@ setInterval(function () {
 }, 3000);
 
 
+
+// ================= CONVERTER =================
+
 const usdInput = document.querySelector('#usd');
 const somInput = document.querySelector('#som');
 const eurInput = document.querySelector('#eur');
@@ -46,22 +49,23 @@ const inputs = {
     eur: eurInput
 };
 
-const xhr = new XMLHttpRequest();
-xhr.open('GET', '../data/convertor.json');
+// Загрузка курсов валют
+async function getRates() {
+    try {
+        const response = await fetch('../data/convertor.json');
 
-xhr.onload = function () {
-    if (xhr.status === 200) {
-        rates = JSON.parse(xhr.responseText);
+        if (!response.ok) {
+            throw new Error('Не удалось загрузить курсы валют');
+        }
+
+        rates = await response.json();
+
+    } catch (error) {
+        console.error('Ошибка конвертера:', error);
     }
-};
+}
 
-xhr.onerror = function () {
-    console.error('Не удалось загрузить курс');
-};
-
-xhr.send();
-
-
+// Общая функция конвертации
 function convertCurrency(currency) {
     if (!rates) return;
 
@@ -85,11 +89,18 @@ function convertCurrency(currency) {
         }
     });
 }
+
+// Обработчики событий
 Object.keys(inputs).forEach(function (currency) {
     inputs[currency].addEventListener('input', function () {
         convertCurrency(currency);
     });
 });
+
+getRates();
+
+
+// ================= CARD SWITCHER =================
 
 const card = document.querySelector('.card');
 const btnNext = document.querySelector('#btn-next');
@@ -97,39 +108,109 @@ const btnPrev = document.querySelector('#btn-prev');
 
 let cardId = 1;
 
-const getCard = () => {
-    fetch(`https://jsonplaceholder.typicode.com/todos/${cardId}`)
-        .then((response) => response.json())
-        .then((data) => {
-            const text = data.completed ? 'completed' : 'in progress';
-            const color = data.completed ? 'green' : 'red';
+async function getCard() {
+    try {
+        const response = await fetch(
+            `https://jsonplaceholder.typicode.com/todos/${cardId}`
+        );
 
-            card.innerHTML = `
-                <p>${data.title}</p>
-                <p style="color: ${color}">${text}</p>
-                <span>${data.id}</span>
-            `;
-        })
-        .catch((error) => console.error(error));
-};
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки карточки');
+        }
 
+        const data = await response.json();
+
+        const text = data.completed ? 'completed' : 'in progress';
+        const color = data.completed ? 'green' : 'red';
+
+        card.innerHTML = `
+            <p>${data.title}</p>
+            <p style="color: ${color}">${text}</p>
+            <span>${data.id}</span>
+        `;
+
+    } catch (error) {
+        console.error('Ошибка Card Switcher:', error);
+    }
+}
+
+// NEXT
 btnNext.onclick = () => {
     cardId = cardId === 200 ? 1 : cardId + 1;
     getCard();
 };
 
+// PREV
 btnPrev.onclick = () => {
     cardId = cardId === 1 ? 200 : cardId - 1;
     getCard();
 };
 
+// Первая карточка загружается автоматически
 getCard();
 
 
-fetch('https://jsonplaceholder.typicode.com/posts')
-    .then(response => response.json())
-    .then(data => console.log('Posts:', data))
-    .catch(error => console.error(error));
+// ================= FETCH POSTS =================
+
+async function getPosts() {
+    try {
+        const response = await fetch(
+            'https://jsonplaceholder.typicode.com/posts'
+        );
+
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки постов');
+        }
+
+        const data = await response.json();
+        console.log('Posts:', data);
+
+    } catch (error) {
+        console.error('Ошибка Fetch Posts:', error);
+    }
+}
+
+getPosts();
+
+
+
+const searchInput = document.querySelector('#searchInput')
+const searchButton = document.querySelector('#search')
+const city = document.querySelector('.city')
+const temp = document.querySelector('.temp')
+
+const WEATHER_API = 'https://api.openweathermap.org/data/2.5/weather'
+const WEATHER_API_KEY = '291aa3950880603684e43c6cc36aed88'
+
+searchButton.onclick = async () => {
+    if (searchInput.value !== '') {
+        try {
+            const response = await fetch(`${WEATHER_API}?q=${searchInput.value}&units=metric&lang=ru&appid=${WEATHER_API_KEY}`)
+            const data = await response.json()
+
+            if (data.name) {
+                city.style.color = 'white'
+                city.innerHTML = data.name
+                temp.innerHTML = Math.round(data.main.temp) + '&deg;C'
+            } else {
+                city.innerHTML = 'Город не найден'
+                city.style.color = 'red'
+                temp.innerHTML = ''
+            }
+        } catch (error) {
+            console.error(error)
+        }
+
+        searchInput.value = ''
+    } else {
+        city.innerHTML = 'Введите название города!'
+        city.style.color = 'red'
+        temp.innerHTML = ''
+    }
+}
+
+
+
 
 
 
