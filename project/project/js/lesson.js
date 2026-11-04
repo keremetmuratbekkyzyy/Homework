@@ -35,7 +35,7 @@ setInterval(function () {
 
 
 
-// ================= CONVERTER =================
+// CONVERTER
 
 const usdInput = document.querySelector('#usd');
 const somInput = document.querySelector('#som');
@@ -49,7 +49,6 @@ const inputs = {
     eur: eurInput
 };
 
-// Загрузка курсов валют
 async function getRates() {
     try {
         const response = await fetch('../data/convertor.json');
@@ -65,7 +64,6 @@ async function getRates() {
     }
 }
 
-// Общая функция конвертации
 function convertCurrency(currency) {
     if (!rates) return;
 
@@ -90,7 +88,6 @@ function convertCurrency(currency) {
     });
 }
 
-// Обработчики событий
 Object.keys(inputs).forEach(function (currency) {
     inputs[currency].addEventListener('input', function () {
         convertCurrency(currency);
@@ -99,8 +96,6 @@ Object.keys(inputs).forEach(function (currency) {
 
 getRates();
 
-
-// ================= CARD SWITCHER =================
 
 const card = document.querySelector('.card');
 const btnNext = document.querySelector('#btn-next');
@@ -134,23 +129,17 @@ async function getCard() {
     }
 }
 
-// NEXT
 btnNext.onclick = () => {
     cardId = cardId === 200 ? 1 : cardId + 1;
     getCard();
 };
 
-// PREV
 btnPrev.onclick = () => {
     cardId = cardId === 1 ? 200 : cardId - 1;
     getCard();
 };
 
-// Первая карточка загружается автоматически
 getCard();
-
-
-// ================= FETCH POSTS =================
 
 async function getPosts() {
     try {
